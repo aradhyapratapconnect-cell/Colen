@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "colen"
+version = "0.1.0"
+description = "Colen - A beautiful Jarvis-like CLI assistant"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "rich>=13.0.0",
+    "click>=8.0.0",
+    "pyfiglet>=0.8",
+    "requests>=2.28.0",
+]
+[project.scripts]
+colen = "colen.__main__:main"
+colen-chat = "colen.assistant:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+# Gapless, low-latency streaming speech playback (numpy is already required
+# by sounddevice's companion usage in colen.speech).
+speech = [
+    "sounddevice>=0.4.6",
+    "numpy>=1.21",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["colen*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
