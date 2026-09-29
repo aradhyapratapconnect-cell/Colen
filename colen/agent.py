@@ -30,6 +30,9 @@ class ToolCallingAgent:
         # Groq API configuration
         self.groq_url = "https://api.groq.com/openai/v1/chat/completions"
         self.api_key = self._get_api_key()
+        
+        # Fallback models for when the primary model is not available
+        self.fallback_models = ["openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
     
     def _get_api_key(self) -> str:
         """Get the Groq API key from environment."""
@@ -42,7 +45,7 @@ class ToolCallingAgent:
         return api_key
     
     def _make_api_request(self, messages: List[Dict[str, Any]], tools: Optional[List[Dict]] = None) -> Dict[str, Any]:
-        """Make a request to the Groq API.
+        """Make a request to the Groq API with model fallback support.
         
         Args:
             messages: Conversation messages
@@ -56,28 +59,47 @@ class ToolCallingAgent:
             "Content-Type": "application/json",
         }
         
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "stream": False,
-            "temperature": 0.6,
-            "max_tokens": 1000,
-        }
+        # Try the primary model first, then fallback models
+        models_to_try = [self.model] + [m for m in self.fallback_models if m != self.model]
         
-        if tools:
-            payload["tools"] = tools
+        for model in models_to_try:
+            payload = {
+                "model": model,
+                "messages": messages,
+                "stream": False,
+                "temperature": 0.6,
+                "max_tokens": 1000,
+            }
+            
+            if tools:
+                payload["tools"] = tools
+            
+            try:
+                response = requests.post(
+                    self.groq_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=(5, 60),
+                )
+                
+                if response.status_code == 200:
+                    # Update the model if we had to fall back
+                    if model != self.model:
+                        self.model = model
+                    return response.json()
+                elif response.status_code == 404:
+                    # Model not found, try next fallback
+                    continue
+                else:
+                    # Other error, raise immediately
+                    raise RuntimeError(f"Groq API request failed (HTTP {response.status_code}): {response.text}")
+                    
+            except requests.RequestException as e:
+                if model == models_to_try[-1]:  # Last model to try
+                    raise RuntimeError(f"Groq API request failed: {str(e)}")
+                continue
         
-        response = requests.post(
-            self.groq_url,
-            headers=headers,
-            json=payload,
-            timeout=(5, 60),
-        )
-        
-        if response.status_code != 200:
-            raise RuntimeError(f"Groq API request failed (HTTP {response.status_code}): {response.text}")
-        
-        return response.json()
+        raise RuntimeError(f"None of the models {models_to_try} are accessible on this Groq key.")
     
     def _execute_tool_call(self, tool_call: Dict[str, Any]) -> str:
         """Execute a tool call and return the result.
