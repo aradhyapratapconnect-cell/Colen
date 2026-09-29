@@ -1,0 +1,11 @@
+[TTS-1] rate=24000 ch=1 bits=16 | first PCM @ 0.89s | wall=13.73s audio=6.68s => production 0.49x realtime (337 net chunks)
+[TTS-2] rate=24000 ch=1 bits=16 | first PCM @ 0.60s | wall=6.85s audio=3.56s => production 0.52x realtime (181 net chunks)
+
+(first word: n/a, total 3.50s)
+
+[CHUNK TIMELINE]
+
+[WRITES] count=0  answer wall=3.51s
+[STARVE] approx stalled audio time: 0.00s
+[CAPTURE] 0 bytes of PCM inspected
+[ANSWER] 

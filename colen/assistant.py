@@ -285,6 +285,7 @@ def answer(
                 header_buf = bytearray()
                 prefix_done = False
                 rate, channels = 24000, 1
+                pcm = bytearray()
                 for chunk in stream_speech(clean):
                     if not prefix_done:
                         header_buf.extend(chunk)
@@ -295,12 +296,16 @@ def answer(
                             if bits != 16:
                                 raise RuntimeError("non-16-bit PCM from TTS")
                             data_offset = _find_wav_data_offset(bytes(header_buf))
-                            pcm = header_buf[data_offset:]
+                            pcm.extend(header_buf[data_offset:])
                             prefix_done = True
                             if pcm:
                                 pcm_queue.put((rate, channels, bytes(pcm)))
+                                pcm.clear()
                     else:
-                        pcm_queue.put((rate, channels, chunk))
+                        pcm.extend(chunk)
+                        if pcm:
+                            pcm_queue.put((rate, channels, bytes(pcm)))
+                            pcm.clear()
             except Exception as exc:
                 tts_error.append(exc)
                 pcm_queue.put(None)  # signal error
