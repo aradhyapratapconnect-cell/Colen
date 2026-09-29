@@ -38,6 +38,8 @@ from colen.speech import (
     speak,
     stream_speech,
 )
+from colen.agent import create_agent
+from colen.config import get_config
 
 console = Console()
 
@@ -246,6 +248,7 @@ def answer(
     question: str,
     history: Optional[List[dict]] = None,
     play: bool = True,
+    use_tools: bool = True,
 ) -> str:
     """Ask Groq and speak the answer sentence-by-sentence while it streams.
 
@@ -254,8 +257,47 @@ def answer(
     stream.  Generation, synthesis and playback therefore overlap, so the
     first word is heard as early as possible and the answer is gapless.
 
+    Args:
+        question: User's question
+        history: Conversation history
+        play: Whether to play audio
+        use_tools: Whether to use tool calling (default: True)
+
     Returns the full answer text.
     """
+    config = get_config()
+    
+    # Use tool calling agent if tools are enabled and requested
+    if use_tools and config.ENABLE_TOOLS:
+        try:
+            agent = create_agent(GROQ_MODEL)
+            full_response = ""
+            
+            for response_chunk in agent.process_message(question, history):
+                full_response += response_chunk
+                console.print(f"[cyan]{response_chunk}[/cyan]", end="", soft_wrap=True)
+                
+                # For TTS, we need to handle sentence-by-sentence
+                if play:
+                    # Simple TTS integration for tool responses
+                    # TODO: Implement proper streaming TTS for tool responses
+                    pass
+            
+            console.print()
+            
+            # Update history with the interaction
+            if history is not None:
+                history.append({"role": "user", "content": question})
+                history.append({"role": "assistant", "content": full_response})
+            
+            return full_response
+            
+        except Exception as e:
+            console.print(f"[red]Tool calling error: {e}[/red]")
+            console.print("[dim]Falling back to standard LLM mode...[/dim]")
+            # Fall through to standard mode
+    
+    # Standard LLM mode without tools
     messages: List[dict] = [{"role": "system", "content": _SYSTEM_PROMPT}]
     if history:
         messages.extend(history)
@@ -348,6 +390,12 @@ def answer(
     console.print()
     first = f"{t_first_pcm - t0:.2f}s" if t_first_pcm else "n/a"
     console.print(f"[dim](first word: {first}, total {time.time() - t0:.2f}s)[/dim]")
+    
+    # Update history with the interaction
+    if history is not None:
+        history.append({"role": "user", "content": question})
+        history.append({"role": "assistant", "content": " ".join(text_parts)})
+    
     return " ".join(text_parts)
 
 

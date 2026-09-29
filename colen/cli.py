@@ -19,6 +19,8 @@ from colen.commands import (
     show_help_panel,
     show_system_info,
     show_time,
+    show_tools_help,
+    show_audit_log,
 )
 
 console = Console()
@@ -174,10 +176,25 @@ def process_command(command: str) -> bool:
         clear_conversation_history()
         return True
     
-    # Any other prompt: directly talk to Colen using Groq LLM + PocketTTS!
+    # Tools commands
+    if cmd in ("tools", "automation"):
+        show_tools_help()
+        return True
+    
+    # Audit commands
+    if cmd in ("audit", "log"):
+        show_audit_log()
+        return True
+    
+    # Any other prompt: directly talk to Colen using Groq LLM + PocketTTS with tool calling!
     try:
         from colen.assistant import answer
-        reply = answer(command, history=_CONVERSATION_HISTORY, play=True)
+        from colen.config import get_config
+        
+        config = get_config()
+        reply = answer(command, history=_CONVERSATION_HISTORY, play=True, use_tools=config.ENABLE_TOOLS)
+        
+        # Always manage history in CLI for consistency
         _CONVERSATION_HISTORY.append({"role": "user", "content": command})
         _CONVERSATION_HISTORY.append({"role": "assistant", "content": reply})
         del _CONVERSATION_HISTORY[:-10]  # keep sliding window of context
