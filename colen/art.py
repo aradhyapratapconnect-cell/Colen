@@ -37,12 +37,11 @@ def get_jarvis_banner() -> str:
 
 def get_centered_banner() -> str:
     """Get a beautifully centered Colen banner with enhanced styling."""
-    figlet = Figlet(font="big")
+    figlet = Figlet(font="slant")
     banner = figlet.renderText("Colen")
 
-    # Clean up the banner
-    lines = [line.rstrip() for line in banner.split('\n') if line.strip() != '']
-    banner = '\n'.join(lines)
+    # Clean up the banner - don't strip trailing spaces, they're needed for alignment
+    lines = [line for line in banner.split('\n') if line.strip() != '']
     max_len = max(len(line) for line in lines)
 
     # Add elegant decorative elements using ASCII
