@@ -13,23 +13,25 @@ def get_jarvis_banner() -> str:
     """Get a Jarvis-style banner with decorative elements."""
     figlet = Figlet(font="doom", justify="center", width=80)
     banner = figlet.renderText("Colen")
-    
+
     # Add decorative elements using ASCII characters
     lines = [line.rstrip() for line in banner.split('\n') if line.strip() != '']
     max_len = max(len(line) for line in lines)
-    
+
     # Create border using ASCII
-    border = '+' + '=' * (max_len + 4) + '+'
-    bottom_line = '+' + '=' * (max_len + 4) + '+'
-    
+    inner_width = max_len + 2
+    border = '+' + '=' * inner_width + '+'
+    bottom_line = '+' + '=' * inner_width + '+'
+
     # Center each line
     centered_lines = []
     for line in lines:
-        padding = ' ' * ((max_len - len(line)) // 2)
-        centered_lines.append('| ' + padding + line + padding + ' |')
-    
+        left_pad = ' ' * ((inner_width - len(line)) // 2)
+        right_pad = ' ' * (inner_width - len(line) - len(left_pad))
+        centered_lines.append('|' + left_pad + line + right_pad + '|')
+
     banner_text = '\n'.join(centered_lines)
-    
+
     return f"{border}\n{banner_text}\n{bottom_line}\n"
 
 
@@ -37,26 +39,30 @@ def get_centered_banner() -> str:
     """Get a beautifully centered Colen banner with enhanced styling."""
     figlet = Figlet(font="big", justify="center", width=80)
     banner = figlet.renderText("Colen")
-    
+
     # Clean up the banner
     lines = [line.rstrip() for line in banner.split('\n') if line.strip() != '']
     banner = '\n'.join(lines)
     max_len = max(len(line) for line in lines)
-    
+
     # Add elegant decorative elements using ASCII
-    width = max_len + 8
-    top = '+' + '=' * (width - 2) + '+'
-    bottom = '+' + '=' * (width - 2) + '+'
-    
+    inner_width = max_len + 4
+    top = '+' + '=' * inner_width + '+'
+    bottom = '+' + '=' * inner_width + '+'
+
     # Center each line with borders
     centered_lines = []
     for line in lines:
-        padding = ' ' * ((max_len - len(line)) // 2)
-        centered_lines.append('| ' + padding + line + padding + ' |')
-    
+        left_pad = ' ' * ((inner_width - len(line)) // 2)
+        right_pad = ' ' * (inner_width - len(line) - len(left_pad))
+        centered_lines.append('|' + left_pad + line + right_pad + '|')
+
     banner_text = '\n'.join(centered_lines)
-    subtitle = '| ' + ' ' * ((width - 20) // 2) + '+ System Assistant +' + ' ' * ((width - 20) // 2) + ' |'
-    
+    subtitle_text = '+ System Assistant +'
+    left_sub_pad = ' ' * ((inner_width - len(subtitle_text)) // 2)
+    right_sub_pad = ' ' * (inner_width - len(subtitle_text) - len(left_sub_pad))
+    subtitle = '|' + left_sub_pad + subtitle_text + right_sub_pad + '|'
+
     return f"{top}\n{banner_text}\n{subtitle}\n{bottom}\n"
 
 
@@ -90,26 +96,30 @@ def get_minimal_banner() -> str:
     """Get a minimal but elegant banner."""
     figlet = Figlet(font="standard", justify="center", width=80)
     banner = figlet.renderText("Colen")
-    
+
     # Clean up the banner
     lines = [line.rstrip() for line in banner.split('\n') if line.strip() != '']
     banner = '\n'.join(lines)
     max_len = max(len(line) for line in lines)
-    
+
     # Add simple elegant border
-    width = max_len + 4
-    top = '+' + '-' * (width - 2) + '+'
-    bottom = '+' + '-' * (width - 2) + '+'
-    
+    inner_width = max_len + 2
+    top = '+' + '-' * inner_width + '+'
+    bottom = '+' + '-' * inner_width + '+'
+
     # Center each line with borders
     centered_lines = []
     for line in lines:
-        padding = ' ' * ((max_len - len(line)) // 2)
-        centered_lines.append('| ' + padding + line + padding + ' |')
-    
+        left_pad = ' ' * ((inner_width - len(line)) // 2)
+        right_pad = ' ' * (inner_width - len(line) - len(left_pad))
+        centered_lines.append('|' + left_pad + line + right_pad + '|')
+
     banner_text = '\n'.join(centered_lines)
-    subtitle = '| ' + ' ' * ((width - 24) // 2) + 'Voice Assistant' + ' ' * ((width - 24) // 2) + ' |'
-    
+    subtitle_text = 'Voice Assistant'
+    left_sub_pad = ' ' * ((inner_width - len(subtitle_text)) // 2)
+    right_sub_pad = ' ' * (inner_width - len(subtitle_text) - len(left_sub_pad))
+    subtitle = '|' + left_sub_pad + subtitle_text + right_sub_pad + '|'
+
     return f"{top}\n{banner_text}\n{subtitle}\n{bottom}\n"
 
 
@@ -132,26 +142,30 @@ def get_elegant_banner() -> str:
     """Get an elegant, minimalist banner with subtle styling."""
     figlet = Figlet(font="block", justify="center", width=80)
     banner = figlet.renderText("Colen")
-    
+
     # Clean up the banner
     lines = [line.rstrip() for line in banner.split('\n') if line.strip() != '']
     banner = '\n'.join(lines)
     max_len = max(len(line) for line in lines)
-    
+
     # Add elegant decorative elements using ASCII
-    width = max_len + 6
-    top = '+' + '-' * (width - 2) + '+'
-    bottom = '+' + '-' * (width - 2) + '+'
-    
+    inner_width = max_len + 4
+    top = '+' + '-' * inner_width + '+'
+    bottom = '+' + '-' * inner_width + '+'
+
     # Center each line with borders
     centered_lines = []
     for line in lines:
-        padding = ' ' * ((max_len - len(line)) // 2)
-        centered_lines.append('|' + padding + line + padding + '|')
-    
+        left_pad = ' ' * ((inner_width - len(line)) // 2)
+        right_pad = ' ' * (inner_width - len(line) - len(left_pad))
+        centered_lines.append('|' + left_pad + line + right_pad + '|')
+
     banner_text = '\n'.join(centered_lines)
-    subtitle = '|' + ' ' * ((width - 18) // 2) + 'System Assistant' + ' ' * ((width - 18) // 2) + '|'
-    
+    subtitle_text = 'System Assistant'
+    left_sub_pad = ' ' * ((inner_width - len(subtitle_text)) // 2)
+    right_sub_pad = ' ' * (inner_width - len(subtitle_text) - len(left_sub_pad))
+    subtitle = '|' + left_sub_pad + subtitle_text + right_sub_pad + '|'
+
     return f"{top}\n{banner_text}\n{subtitle}\n{bottom}\n"
 
 
