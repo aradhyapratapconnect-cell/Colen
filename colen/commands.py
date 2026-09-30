@@ -40,6 +40,7 @@ def show_help_panel() -> None:
         ("info, i", "Show system information"),
         ("time, t", "Show current date and time"),
         ("banner, b", "Show the Colen banner"),
+        ("banner <style>", "Show banner style: jarvis, fancy, minimal, cyber, elegant"),
         ("clear, c", "Clear the terminal / conversation context"),
         ("tools", "Show available automation tools and their status"),
         ("audit", "Show recent tool execution audit log"),

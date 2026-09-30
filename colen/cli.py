@@ -53,7 +53,7 @@ def startup_sequence() -> None:
 
 def print_welcome() -> None:
     """Print the welcome message."""
-    show_banner("jarvis")
+    show_banner("centered")
     
     welcome_text = Text()
     welcome_text.append("Good evening, Sir. ", style="bold white")
@@ -157,7 +157,7 @@ def process_command(command: str) -> bool:
         return True
     
     # Banner commands
-    if cmd in ("banner", "b"):
+    if cmd == "banner" or cmd == "b":
         show_banner("default")
         return True
     
@@ -233,7 +233,7 @@ def run_interactive() -> None:
 
 @click.command()
 @click.option("--interactive", "-i", is_flag=True, help="Run in interactive mode")
-@click.option("--banner", "-b", type=click.Choice(list(BANNERS.keys())), default="jarvis", help="Banner style to show")
+@click.option("--banner", "-b", type=click.Choice(list(BANNERS.keys())), default="centered", help="Banner style to show")
 @click.option("--command", "-c", help="Execute a single command and exit")
 @click.version_option(version="0.1.0", prog_name="Colen")
 def main(interactive: bool, banner: str, command: Optional[str]) -> None:
@@ -243,8 +243,7 @@ def main(interactive: bool, banner: str, command: Optional[str]) -> None:
     Run without arguments for interactive mode, or use --command to execute a single command.
     """
     if command:
-        # Execute single command
-        show_banner(banner)
+        # Execute single command (don't show banner twice)
         process_command(command)
         return
     
